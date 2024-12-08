@@ -1,48 +1,84 @@
-import { useState } from 'react';
-import reactLogo from '../assets/react.svg';
-import blockletLogo from '../assets/blocklet.svg';
-import viteLogo from '../assets/vite.svg';
-import './home.css';
+import { useEffect, useState } from 'react';
+
 import api from '../libs/api';
+import './home.css';
 
 function Home() {
-  const [count, setCount] = useState(0);
+  const [profile, setProfile] = useState({
+    name: '',
+    email: '',
+    phone: '',
+  });
+  const [isEditing, setIsEditing] = useState(false);
 
-  async function getApiData() {
-    const { data } = await api.get('/api/data');
-    const { message } = data;
-    alert(`Message from api: ${message}`);
-  }
+  useEffect(() => {
+    api
+      .get('/api/data')
+      .then((response) => {
+        setProfile(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
+
+  const handleEdit = () => {
+    setIsEditing(true);
+  };
+
+  const handleSave = () => {
+    api
+      .post('/api/savaDate', profile)
+      .then((response) => {
+        alert(response.data.message);
+      })
+      .catch((error) => {
+        alert(error);
+      });
+    setIsEditing(false);
+  };
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setProfile({ ...profile, [name]: value });
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank" rel="noreferrer">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-        <a href="https://www.arcblock.io/docs/blocklet-developer/getting-started" target="_blank" rel="noreferrer">
-          <img src={blockletLogo} className="logo blocklet" alt="Blocklet logo" />
-        </a>
-      </div>
-      <h1>Vite + React + Blocklet</h1>
+    <div>
       <div className="card">
-        <button type="button" onClick={() => setCount((currentCount) => currentCount + 1)}>
-          count is {count}
-        </button>
-        <br />
-        <br />
-        <button type="button" onClick={getApiData}>
-          Get API Data
-        </button>
-        <p>
-          Edit <code>src/app.jsx</code> and save to test HMR
-        </p>
+        {isEditing ? (
+          <form>
+            <label htmlFor="name">
+              Name:
+              <input type="text" name="name" value={profile.name} onChange={handleInputChange} />
+            </label>
+            <br />
+            <label htmlFor="email">
+              Email:
+              <input type="email" name="email" value={profile.email} onChange={handleInputChange} />
+            </label>
+            <br />
+            <label htmlFor="phone">
+              Phone:
+              <input type="tel" name="phone" value={profile.phone} onChange={handleInputChange} />
+            </label>
+            <br />
+            <button type="button" onClick={handleSave}>
+              Save
+            </button>
+          </form>
+        ) : (
+          <div>
+            <p>Name: {profile.name}</p>
+            <p>Email: {profile.email}</p>
+            <p>Phone: {profile.phone}</p>
+            <button type="button" onClick={handleEdit}>
+              Edit
+            </button>
+          </div>
+        )}
       </div>
-      <p className="read-the-docs">Click on the Vite and React logos to learn more</p>
-    </>
+    </div>
   );
 }
 
