@@ -2,11 +2,11 @@
 一个笔试的demo
 
 ## 本地使用环境
-  win + wsl2(ubuntu)
-  node v20.11.1
-  npm v10.2.4
-  nginx version: nginx/1.18.0 (Ubuntu)
-  blocklet v1.16.33
+  - win + wsl2(ubuntu)
+  - node v20.11.1
+  - npm v10.2.4
+  - nginx version: nginx/1.18.0 (Ubuntu)
+  - blocklet v1.16.33
 ## 项目运行命令
   npm i && npm run dev
 
