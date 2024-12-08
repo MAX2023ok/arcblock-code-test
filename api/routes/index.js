@@ -22,12 +22,19 @@ router.use('/data', async (req, res) => {
       },
     });
     res.json(defaultUser);
+    return;
   }
   res.json(users[0]);
 });
 
 router.use('/savaDate', async (req, res) => {
   const { name, email, phone } = req.body;
+  if (!name || !email || !phone) {
+    res.json({
+      message: 'sava data error',
+    });
+    return;
+  }
   const users = await prismaClient.user.findMany();
   if (users.length === 0) {
     await prismaClient.user.create({
